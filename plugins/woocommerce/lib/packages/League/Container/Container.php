@@ -10,7 +10,7 @@ use Automattic\WooCommerce\Vendor\League\Container\ServiceProvider\{
     ServiceProviderAggregateInterface,
     ServiceProviderInterface
 };
-use Automattic\WooCommerce\Vendor\Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
 {

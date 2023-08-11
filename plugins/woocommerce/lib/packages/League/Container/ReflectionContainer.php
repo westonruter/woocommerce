@@ -4,7 +4,7 @@ namespace Automattic\WooCommerce\Vendor\League\Container;
 
 use Automattic\WooCommerce\Vendor\League\Container\Argument\{ArgumentResolverInterface, ArgumentResolverTrait};
 use Automattic\WooCommerce\Vendor\League\Container\Exception\NotFoundException;
-use Automattic\WooCommerce\Vendor\Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;

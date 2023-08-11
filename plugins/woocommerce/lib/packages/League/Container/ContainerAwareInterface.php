@@ -2,7 +2,7 @@
 
 namespace Automattic\WooCommerce\Vendor\League\Container;
 
-use Automattic\WooCommerce\Vendor\Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 interface ContainerAwareInterface
 {

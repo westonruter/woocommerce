@@ -5,7 +5,7 @@ namespace Automattic\WooCommerce\Vendor\League\Container\Argument;
 use Automattic\WooCommerce\Vendor\League\Container\Container;
 use Automattic\WooCommerce\Vendor\League\Container\Exception\{ContainerException, NotFoundException};
 use Automattic\WooCommerce\Vendor\League\Container\ReflectionContainer;
-use Automattic\WooCommerce\Vendor\Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use ReflectionFunctionAbstract;
 use ReflectionParameter;
 
