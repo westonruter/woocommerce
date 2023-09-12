@@ -33,7 +33,13 @@ export default function Discover(): JSX.Element | null {
 	}, [] );
 
 	if ( isLoading ) {
-		return <ProductLoader />;
+		return (
+			<div className="woocommerce-marketplace__discover">
+				<ProductLoader placeholderCount={ 3 } />
+				<ProductLoader placeholderCount={ 3 } />
+				<ProductLoader placeholderCount={ 3 } />
+			</div>
+		);
 	}
 
 	const groupsList = productGroups.flatMap( ( group ) => group );
