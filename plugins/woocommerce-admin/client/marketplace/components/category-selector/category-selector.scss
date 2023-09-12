@@ -37,6 +37,7 @@
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background: #f0f0f0;
 		height: 32px;
+		pointer-events: none;
 		width: 6em;
 	}
 }

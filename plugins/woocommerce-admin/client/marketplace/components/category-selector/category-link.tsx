@@ -40,6 +40,7 @@ export default function CategoryLink( props: Category ): JSX.Element {
 			className={ classes }
 			onClick={ updateCategorySelection }
 			value={ props.slug }
+			aria-hidden={ isLoading }
 		>
 			{ props.label }
 		</button>
