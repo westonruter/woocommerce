@@ -5,7 +5,6 @@
 /**
  * Internal dependencies
  */
-import './product-loader.scss';
 
 export default function ProductLoader(): JSX.Element {
 	return (
