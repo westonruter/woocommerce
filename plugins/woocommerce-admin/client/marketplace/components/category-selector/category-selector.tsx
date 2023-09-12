@@ -104,10 +104,6 @@ export default function CategorySelector(): JSX.Element {
 
 	if ( isLoading ) {
 		return (
-			<div className="woocommerce-marketplace__category-selector-loading">
-				<p>{ __( 'Loading categories…', 'woocommerce' ) }</p>
-				<Spinner />
-			</div>
 		);
 	}
 
