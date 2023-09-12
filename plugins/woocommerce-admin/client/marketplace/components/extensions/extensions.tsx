@@ -99,7 +99,7 @@ export default function Extensions(): JSX.Element {
 
 	function content() {
 		if ( isLoading ) {
-			return <ProductLoader />;
+			return <ProductLoader hasTitle={ false } />;
 		}
 
 		if ( products.length === 0 ) {
