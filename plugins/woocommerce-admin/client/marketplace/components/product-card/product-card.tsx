@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Card } from '@wordpress/components';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -13,11 +14,22 @@ import { appendUTMParams } from '../../utils/functions';
 
 export interface ProductCardProps {
 	type?: string;
-	product: Product;
+	product?: Product;
 }
 
 function ProductCard( props: ProductCardProps ): JSX.Element {
-	const { product } = props;
+	// Get the product if provided; if not provided, render a skeleton loader
+	const product = props.product ?? {
+		title: '',
+		description: '',
+		vendorName: '',
+		vendorUrl: '',
+		icon: '',
+		url: '',
+		price: 0,
+	};
+	const isLoading = ! props.product;
+
 	// We hardcode this for now while we only display prices in USD.
 	const currencySymbol = '$';
 
@@ -41,11 +53,18 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 		);
 	}
 
+	const classNames = classnames( 'woocommerce-marketplace__product-card', {
+		'is-loading': isLoading,
+	} );
+
 	return (
-		<Card className="woocommerce-marketplace__product-card">
+		<Card className={ classNames } aria-hidden={ isLoading }>
 			<div className="woocommerce-marketplace__product-card__content">
 				<div className="woocommerce-marketplace__product-card__header">
 					<div className="woocommerce-marketplace__product-card__details">
+						{ isLoading &&
+							<div className="woocommerce-marketplace__product-card__icon" />
+						}
 						{ product.icon && (
 							<img
 								className="woocommerce-marketplace__product-card__icon"
@@ -61,9 +80,12 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									{ product.title }
+									{ isLoading ? ' ' : product.title }
 								</a>
 							</h2>
+							{ isLoading &&
+								<p className="woocommerce-marketplace__product-card__vendor" />
+							}
 							{ productVendor && (
 								<p className="woocommerce-marketplace__product-card__vendor">
 									<span>{ __( 'By ', 'woocommerce' ) }</span>
@@ -77,19 +99,22 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 					{ product.description }
 				</p>
 				<div className="woocommerce-marketplace__product-card__price">
-					<span>
-						{
-							// '0' is a free product
-							product.price === 0
-								? __( 'Free download', 'woocommerce' )
-								: currencySymbol + product.price
-						}
-					</span>
-					<span className="woocommerce-marketplace__product-card__price-billing">
-						{ product.price === 0
-							? ''
-							: __( ' annually', 'woocommerce' ) }
-					</span>
+					{ ! isLoading &&
+					<>
+						<span>
+							{
+								// '0' is a free product
+								product.price === 0
+									? __( 'Free download', 'woocommerce' )
+									: currencySymbol + product.price
+							}
+						</span>
+						<span className="woocommerce-marketplace__product-card__price-billing">
+							{ product.price === 0
+								? ''
+								: __( ' annually', 'woocommerce' ) }
+						</span>
+					</> }
 				</div>
 			</div>
 		</Card>
