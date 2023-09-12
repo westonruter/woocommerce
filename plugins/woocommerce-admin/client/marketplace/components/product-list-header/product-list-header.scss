@@ -6,6 +6,16 @@
 		justify-content: center;
 		gap: $medium-gap;
 		align-self: stretch;
+
+		&.is-loading {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background: #f0f0f0;
+			width: 100%;
+
+			.woocommerce-marketplace__product-list-title {
+				min-height: 18px;
+			}
+		}
 	}
 
 	&__product-list-title {
