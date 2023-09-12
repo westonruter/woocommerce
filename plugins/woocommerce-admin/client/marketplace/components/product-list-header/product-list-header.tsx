@@ -12,7 +12,7 @@ import './product-list-header.scss';
 
 interface ProductListHeaderProps {
 	title: string;
-	groupURL: string;
+	groupURL: string | null;
 }
 
 export default function ProductListHeader(
