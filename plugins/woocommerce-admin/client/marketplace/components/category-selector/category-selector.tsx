@@ -105,11 +105,11 @@ export default function CategorySelector(): JSX.Element {
 	if ( isLoading ) {
 		return (
 			<ul className="woocommerce-marketplace__category-selector">
-				{[...Array(5)].map(() =>
+				{ [ ...Array( 5 ) ].map( () => (
 					<li className="woocommerce-marketplace__category-item">
 						<CategoryLink slug="" label="" selected={ false } />
 					</li>
-				)}
+				) ) }
 			</ul>
 		);
 	}
