@@ -4,12 +4,15 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Orders;
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Blocks\Package;
+use Automattic\WooCommerce\Blocks\Domain\Services\ExtendRestApi;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\Features\FeaturesController;
 use Automattic\WooCommerce\Internal\RegisterHooksInterface;
 use Automattic\WooCommerce\Internal\Traits\ScriptDebug;
 use Automattic\WooCommerce\Internal\Traits\SourceAttributionMeta;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\CheckoutSchema;
 use Exception;
 use WC_Customer;
 use WC_Log_Levels;
@@ -160,6 +163,13 @@ class SourceAttributionController implements RegisterHooksInterface {
 			},
 			10,
 			2
+		);
+
+		add_action(
+			'init',
+			function() {
+				$this->register_blocks();
+			}
 		);
 	}
 
@@ -368,5 +378,61 @@ class SourceAttributionController implements RegisterHooksInterface {
 		);
 
 		$this->proxy->call_static( WC_Tracks::class, 'record_event', 'order_source_attribution', $tracks_data );
+	}
+
+	/**
+	 * Register our blocks.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return void
+	 */
+	private function register_blocks() {
+		try {
+			$args = $this->get_register_block_args();
+			if ( function_exists( 'woocommerce_store_api_register_endpoint_data' ) ) {
+				woocommerce_store_api_register_endpoint_data( $args );
+			} else {
+				/** @var ExtendRestApi $extend */
+				$extend = Package::container()->get( ExtendRestApi::class );
+				$extend->register_endpoint_data( $args );
+			}
+		} catch ( Exception $e ) {
+			$this->log( $e->getMessage(), __METHOD__, WC_Log_Levels::ERROR );
+		}
+	}
+
+	/**
+	 * Get the arguments to register the block.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return array
+	 */
+	private function get_register_block_args() {
+		return array(
+			'endpoint'        => CheckoutSchema::IDENTIFIER,
+			'namespace'       => 'woocommerce/order-source-attribution',
+			'schema_callback' => function () {
+				$fields = array();
+				foreach ( $this->fields as $field ) {
+					$fields[ $this->get_prefixed_field( $field ) ] = array(
+						'description' => $this->get_field_description( $field ),
+						'type'        => 'string',
+						'context'     => array( 'view', 'edit' ),
+						'arg_options' => array(
+							'validate_callback' => function ( $value ) {
+								return is_string( $value );
+							},
+						),
+					);
+				}
+
+				return $fields;
+			},
+			'data_callback'   => function ( $passed_values ) {
+				return $this->get_source_values( $passed_values );
+			},
+		);
 	}
 }
