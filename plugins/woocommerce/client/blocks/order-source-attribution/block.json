@@ -1,0 +1,26 @@
+{
+	"apiVersion": 2,
+	"name": "woocommerce/order-source-attribution",
+	"version": "1.0.0",
+	"title": "Order Source Attribution",
+	"category": "woocommerce",
+	"keywords": [ "WooCommerce" ],
+	"description": "Adds a new column to the Orders page in WooCommerce that shows the source of the order.",
+	"supports": {
+		"html": false,
+		"align": false,
+		"multiple": false,
+		"reusable": false
+	},
+	"parent": [ "woocommerce/checkout-fields-block" ],
+	"attributes": {
+		"lock": {
+			"type": "object",
+			"default": {
+				"remove": true,
+				"move": true
+			}
+		}
+	},
+	"$schema": "https://schemas.wp.org/trunk/block.json"
+}
