@@ -430,9 +430,6 @@ class SourceAttributionController implements RegisterHooksInterface {
 
 				return $fields;
 			},
-			'data_callback'   => function ( $passed_values ) {
-				return $this->get_source_values( $passed_values );
-			},
 		);
 	}
 }
