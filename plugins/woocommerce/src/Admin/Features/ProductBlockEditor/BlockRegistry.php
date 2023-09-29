@@ -25,6 +25,7 @@ class BlockRegistry {
 		'woocommerce/product-checkbox-field',
 		'woocommerce/product-collapsible',
 		'woocommerce/product-description-field',
+		'woocommerce/product-downloads-field',
 		'woocommerce/product-images-field',
 		'woocommerce/product-inventory-email-field',
 		'woocommerce/product-sku-field',
