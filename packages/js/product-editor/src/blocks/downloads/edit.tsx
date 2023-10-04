@@ -26,6 +26,7 @@ import { useEntityProp } from '@wordpress/core-data';
  */
 import { DownloadableFileItem, UploadsBlockAttributes } from './types';
 import { UploadImage } from './upload-image';
+import { EditDownloadsModal } from './edit-downloads-modal';
 
 function getFileName( url?: string ) {
 	const [ name ] = url?.split( '/' ).reverse() ?? [];
@@ -49,6 +50,8 @@ export function Edit( {
 	const [ fileItems, setFileItems ] = useState< DownloadableFileItem[] >(
 		[]
 	);
+	const [ isEditDownloadVisible, setIsEditDownloadVisible ] =
+		useState< boolean >( false );
 
 	useEffect( () => {
 		setFileItems( ( currentItems ) => {
@@ -182,6 +185,16 @@ export function Edit( {
 											) }
 										/>
 									) }
+									{ ! fileItem.uploading && (
+										<Button
+											onClick={ () =>
+												setIsEditDownloadVisible( true )
+											}
+											variant="tertiary"
+										>
+											{ __( 'Edit', 'woocommerce' ) }
+										</Button>
+									) }
 									<Button
 										icon={ closeSmall }
 										label={ __(
@@ -191,6 +204,24 @@ export function Edit( {
 										disabled={ fileItem.uploading }
 										onClick={ removeHandler( fileItem ) }
 									/>
+									{ isEditDownloadVisible && (
+										<EditDownloadsModal
+											downloableItem={ fileItem }
+											onCancel={ () =>
+												setIsEditDownloadVisible(
+													false
+												)
+											}
+											onRemove={ removeHandler(
+												fileItem
+											) }
+											onSave={ () =>
+												setIsEditDownloadVisible(
+													false
+												)
+											}
+										/>
+									) }
 								</div>
 							</ListItem>
 						);
