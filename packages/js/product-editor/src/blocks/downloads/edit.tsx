@@ -50,8 +50,8 @@ export function Edit( {
 	const [ fileItems, setFileItems ] = useState< DownloadableFileItem[] >(
 		[]
 	);
-	const [ isEditDownloadVisible, setIsEditDownloadVisible ] =
-		useState< boolean >( false );
+	const [ selectedDownload, setSelectedDownload ] =
+		useState< DownloadableFileItem | null >();
 
 	useEffect( () => {
 		setFileItems( ( currentItems ) => {
@@ -188,7 +188,7 @@ export function Edit( {
 									{ ! fileItem.uploading && (
 										<Button
 											onClick={ () =>
-												setIsEditDownloadVisible( true )
+												setSelectedDownload( fileItem )
 											}
 											variant="tertiary"
 										>
@@ -204,24 +204,6 @@ export function Edit( {
 										disabled={ fileItem.uploading }
 										onClick={ removeHandler( fileItem ) }
 									/>
-									{ isEditDownloadVisible && (
-										<EditDownloadsModal
-											downloableItem={ fileItem }
-											onCancel={ () =>
-												setIsEditDownloadVisible(
-													false
-												)
-											}
-											onRemove={ removeHandler(
-												fileItem
-											) }
-											onSave={ () =>
-												setIsEditDownloadVisible(
-													false
-												)
-											}
-										/>
-									) }
 								</div>
 							</ListItem>
 						);
@@ -267,6 +249,17 @@ export function Edit( {
 					onUpload={ handleFileUpload }
 					onFileUploadChange={ handleFileUpload }
 					onError={ () => null }
+				/>
+			) }
+			{ selectedDownload && (
+				<EditDownloadsModal
+					downloableItem={ selectedDownload }
+					onCancel={ () => setSelectedDownload( null ) }
+					onRemove={ () => {
+						removeHandler( selectedDownload );
+						setSelectedDownload( null );
+					} }
+					onSave={ () => setSelectedDownload( null ) }
 				/>
 			) }
 		</div>
