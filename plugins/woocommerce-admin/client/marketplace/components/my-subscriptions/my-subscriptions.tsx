@@ -5,7 +5,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, Tooltip } from '@wordpress/components';
 import { getNewPath } from '@woocommerce/navigation';
 import { help } from '@wordpress/icons';
-import { Table } from '@woocommerce/components';
 import { useContext, useEffect, useState } from '@wordpress/element';
 
 /**
@@ -16,12 +15,15 @@ import { Subscription } from './types';
 import './my-subscriptions.scss';
 import { MarketplaceContext } from '../../contexts/marketplace-context';
 import { fetchSubscriptions } from '../../../marketplace/utils/functions';
+import SubscriptionsTable from './subscriptions-table';
+import SubscriptionsTableRow from './subscriptions-table-row';
 
 export default function MySubscriptions(): JSX.Element {
 	const [ subscriptions, setSubscriptions ] = useState<
 		Array< Subscription >
 	>( [] );
-	const { setIsLoading } = useContext( MarketplaceContext );
+	const marketplaceContextValue = useContext( MarketplaceContext );
+	const { isLoading, setIsLoading } = marketplaceContextValue;
 
 	// Get the content for this screen
 	useEffect( () => {
@@ -35,6 +37,54 @@ export default function MySubscriptions(): JSX.Element {
 				setIsLoading( false );
 			} );
 	}, [] );
+
+	const tableHeadersDefault = [
+		{
+			key: 'name',
+			label: __( 'Name', 'woocommerce' ),
+		},
+		{
+			key: 'status',
+			label: __( 'Status', 'woocommerce' ),
+		},
+		{
+			key: 'expiry',
+			label: __( 'Expiry/Renewal date', 'woocommerce' ),
+		},
+		{
+			key: 'autoRenew',
+			label: __( 'Auto-renew', 'woocommerce' ),
+		},
+		{
+			key: 'version',
+			label: __( 'Version', 'woocommerce' ),
+			isNumeric: true,
+		},
+	];
+
+	const tableHeadersAvailable = [
+		...tableHeadersDefault,
+		{
+			key: 'install',
+			label: __( 'Install', 'woocommerce' ),
+		},
+		{
+			key: 'actions',
+			label: __( 'Actions', 'woocommerce' ),
+		},
+	];
+
+	const tableHeadersInstalled = [
+		...tableHeadersDefault,
+		{
+			key: 'activated',
+			label: __( 'Activated', 'woocommerce' ),
+		},
+		{
+			key: 'actions',
+			label: __( 'Actions', 'woocommerce' ),
+		},
+	];
 
 	const updateConnectionUrl = getNewPath(
 		{
@@ -55,104 +105,14 @@ export default function MySubscriptions(): JSX.Element {
 		updateConnectionUrl
 	);
 
-	const tableHeadersInstalled = [
-		{
-			key: 'name',
-			label: __( 'Name', 'woocommerce' ),
-		},
-		{
-			key: 'status',
-			label: __( 'Status', 'woocommerce' ),
-		},
-		{
-			key: 'expiry',
-			label: __( 'Expiry/Renewal date', 'woocommerce' ),
-		},
-		{
-			key: 'autoRenew',
-			label: __( 'Auto-renew', 'woocommerce' ),
-		},
-		{
-			key: 'version',
-			label: __( 'Version', 'woocommerce' ),
-			isNumeric: true,
-		},
-		{
-			key: 'activated',
-			label: __( 'Activated', 'woocommerce' ),
-		},
-		{
-			key: 'actions',
-			label: __( 'Actions', 'woocommerce' ),
-		},
-	];
 	const subscriptionsInstalled: Array< Subscription > = subscriptions.filter(
 		( subscription: Subscription ) => subscription.local.installed
 	);
 
-	const tableHeadersAvailable = [
-		{
-			key: 'name',
-			label: __( 'Name', 'woocommerce' ),
-		},
-		{
-			key: 'status',
-			label: __( 'Status', 'woocommerce' ),
-		},
-		{
-			key: 'expiry',
-			label: __( 'Expiry/Renewal date', 'woocommerce' ),
-		},
-		{
-			key: 'autoRenew',
-			label: __( 'Auto-renew', 'woocommerce' ),
-		},
-		{
-			key: 'version',
-			label: __( 'Version', 'woocommerce' ),
-			isNumeric: true,
-		},
-		{
-			key: 'install',
-			label: __( 'Install', 'woocommerce' ),
-		},
-		{
-			key: 'actions',
-			label: __( 'Actions', 'woocommerce' ),
-		},
-	];
 	const subscriptionsAvailable: Array< Subscription > = subscriptions.filter(
 		( subscription: Subscription ) =>
 			! subscriptionsInstalled.includes( subscription )
 	);
-
-	const getStatus = ( subscription: Subscription ): string => {
-		// TODO add statuses for subscriptions
-		if ( subscription.product_key === '' ) {
-			return __( 'Not found', 'woocommerce' );
-		} else if ( subscription.expired ) {
-			return __( 'Expired', 'woocommerce' );
-		} else if ( subscription.active ) {
-			return __( 'Active', 'woocommerce' );
-		}
-		return __( 'Inactive', 'woocommerce' );
-	};
-
-	const getVersion = ( subscription: Subscription ): string => {
-		if ( subscription.local.version === subscription.version ) {
-			return subscription.local.version;
-		}
-		if ( subscription.local.version && subscription.version ) {
-			return subscription.local.version + ' > ' + subscription.version;
-		}
-		if ( subscription.version ) {
-			return subscription.version;
-		}
-		if ( subscription.local.version ) {
-			return subscription.local.version;
-		}
-		return '';
-	};
 
 	return (
 		<div className="woocommerce-marketplace__my-subscriptions">
@@ -192,18 +152,11 @@ export default function MySubscriptions(): JSX.Element {
 						/>
 					</Tooltip>
 				</p>
-				<Table
+				<SubscriptionsTable
+					isLoading={ isLoading }
 					headers={ tableHeadersInstalled }
 					rows={ subscriptionsInstalled.map( ( item ) => {
-						return [
-							{ display: item.product_name },
-							{ display: getStatus( item ) },
-							{ display: item.expires },
-							{ display: item.autorenew ? 'true' : 'false' },
-							{ display: getVersion( item ) },
-							{ display: item.active ? 'true' : 'false' },
-							{ display: '...' },
-						];
+						return SubscriptionsTableRow( item );
 					} ) }
 				/>
 			</section>
@@ -216,18 +169,11 @@ export default function MySubscriptions(): JSX.Element {
 						'woocommerce'
 					) }
 				</p>
-				<Table
+				<SubscriptionsTable
+					isLoading={ isLoading }
 					headers={ tableHeadersAvailable }
 					rows={ subscriptionsAvailable.map( ( item ) => {
-						return [
-							{ display: item.product_name },
-							{ display: getStatus( item ) },
-							{ display: item.expires },
-							{ display: item.autorenew ? 'true' : 'false' },
-							{ display: getVersion( item ) },
-							{ display: '...' },
-							{ display: '...' },
-						];
+						return SubscriptionsTableRow( item );
 					} ) }
 				/>
 			</section>
