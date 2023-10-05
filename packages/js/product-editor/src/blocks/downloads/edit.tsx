@@ -134,25 +134,21 @@ export function Edit( {
 	}
 
 	function removeHandler( fileItem: DownloadableFileItem ) {
-		return function handleRemoveClick() {
-			const otherDownloads = downloads.reduce< ProductDownload[] >(
-				function removeDownload( others, current ) {
-					if (
-						String( current.id ) === String( fileItem.download.id )
-					) {
-						return others;
-					}
-					return [ ...others, current ];
-				},
-				[]
-			);
+		const otherDownloads = downloads.reduce< ProductDownload[] >(
+			function removeDownload( others, current ) {
+				if ( String( current.id ) === String( fileItem.download.id ) ) {
+					return others;
+				}
+				return [ ...others, current ];
+			},
+			[]
+		);
 
-			if ( ! otherDownloads.length ) {
-				setDownloadable( false );
-			}
+		if ( ! otherDownloads.length ) {
+			setDownloadable( false );
+		}
 
-			setDownloads( otherDownloads );
-		};
+		setDownloads( otherDownloads );
 	}
 
 	return (
@@ -202,7 +198,9 @@ export function Edit( {
 											'woocommerce'
 										) }
 										disabled={ fileItem.uploading }
-										onClick={ removeHandler( fileItem ) }
+										onClick={ () =>
+											removeHandler( fileItem )
+										}
 									/>
 								</div>
 							</ListItem>
@@ -258,6 +256,15 @@ export function Edit( {
 					onRemove={ () => {
 						removeHandler( selectedDownload );
 						setSelectedDownload( null );
+					} }
+					onChange={ ( text: string ) => {
+						const { download } = selectedDownload;
+						const newDownloads = downloads.map( ( obj ) =>
+							obj.id === download.id
+								? { ...download, name: text }
+								: obj
+						) as ProductDownload[];
+						setDownloads( newDownloads );
 					} }
 					onSave={ () => setSelectedDownload( null ) }
 				/>
