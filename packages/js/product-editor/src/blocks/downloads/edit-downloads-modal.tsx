@@ -24,11 +24,13 @@ type EditDownloadsModalProps = {
 	onCancel: () => void;
 	onRemove: () => void;
 	onSave: () => void;
+	onChange: ( name: string ) => void;
 };
 
 export const EditDownloadsModal: React.FC< EditDownloadsModalProps > = ( {
 	downloableItem,
 	onCancel,
+	onChange,
 	onRemove,
 	onSave,
 } ) => {
@@ -56,9 +58,10 @@ export const EditDownloadsModal: React.FC< EditDownloadsModalProps > = ( {
 		}
 	}
 
-	const handleCopyToClipboard = async () => {
+	async function handleCopyToClipboard() {
 		await copyTextToClipboard( download.file );
-	};
+	}
+
 	return (
 		<Modal
 			title={ sprintf(
@@ -91,6 +94,7 @@ export const EditDownloadsModal: React.FC< EditDownloadsModalProps > = ( {
 					label={ __( 'FILE NAME', 'woocommerce' ) }
 					name={ 'file-name' }
 					value={ download.name || '' }
+					onChange={ onChange }
 				/>
 			</BaseControl>
 
