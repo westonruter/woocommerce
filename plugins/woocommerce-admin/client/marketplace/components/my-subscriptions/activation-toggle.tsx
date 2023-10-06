@@ -3,7 +3,7 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Icon, ToggleControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useContext, useState } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
 import { getNewPath, navigateTo } from '@woocommerce/navigation';
 
@@ -12,6 +12,7 @@ import { getNewPath, navigateTo } from '@woocommerce/navigation';
  */
 import { Subscription } from './types';
 import { installProduct } from '../../utils/functions';
+import { SubscriptionsContext } from '../../contexts/subscriptions-context';
 
 interface ActivationToggleProps {
 	subscription: Subscription;
@@ -21,21 +22,13 @@ export default function ActivationToggle( props: ActivationToggleProps ) {
 	const [ loading, setLoading ] = useState( false );
 	const { createErrorNotice, createSuccessNotice } =
 		useDispatch( 'core/notices' );
-
-	const reloadSubscriptions = () => {
-		// Temporary solution to reload the subscriptions list.
-		navigateTo( {
-			url: getNewPath( {
-				reload: Math.random().toString( 36 ).substring( 7 ),
-			} ),
-		} );
-	};
+	const { loadSubscriptions } = useContext( SubscriptionsContext );
 
 	const install = () => {
 		setLoading( true );
 		installProduct( props.subscription.product_id )
 			.then( () => {
-				reloadSubscriptions();
+				loadSubscriptions( false );
 				createSuccessNotice(
 					sprintf(
 						// translators: %s is the product name.
@@ -72,10 +65,6 @@ export default function ActivationToggle( props: ActivationToggleProps ) {
 			} );
 	};
 
-	const toggleActivation = () => {
-		setLoading( true );
-	};
-
 	if ( props.subscription.local.installed === false ) {
 		return (
 			<Button
@@ -92,7 +81,6 @@ export default function ActivationToggle( props: ActivationToggleProps ) {
 	return (
 		<ToggleControl
 			checked={ props.subscription.active }
-			onClick={ toggleActivation }
 			disabled={ loading }
 		/>
 	);
