@@ -5,7 +5,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, Icon, ToggleControl } from '@wordpress/components';
 import { useContext, useState } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
-import { getNewPath, navigateTo } from '@woocommerce/navigation';
 
 /**
  * Internal dependencies
@@ -65,7 +64,10 @@ export default function ActivationToggle( props: ActivationToggleProps ) {
 			} );
 	};
 
-	if ( props.subscription.local.installed === false ) {
+	if (
+		props.subscription.local.installed === false &&
+		props.subscription.maxed === false
+	) {
 		return (
 			<Button
 				variant="primary"
