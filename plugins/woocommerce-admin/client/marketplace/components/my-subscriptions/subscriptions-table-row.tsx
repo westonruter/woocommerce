@@ -172,7 +172,7 @@ export default function tableRow( item: Subscription ): TableRow[] {
 
 	function activation( subscription: Subscription ): TableRow {
 		const displayElement = (
-			<ActivationToggle checked={ subscription.autorenew } />
+			<ActivationToggle subscription={ subscription } />
 		);
 
 		return {

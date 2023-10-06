@@ -3,7 +3,7 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Tooltip } from '@wordpress/components';
-import { getNewPath } from '@woocommerce/navigation';
+import { getNewPath, useQuery } from '@woocommerce/navigation';
 import { help } from '@wordpress/icons';
 import { useContext, useEffect, useState } from '@wordpress/element';
 
@@ -25,6 +25,8 @@ export default function MySubscriptions(): JSX.Element {
 	const marketplaceContextValue = useContext( MarketplaceContext );
 	const { isLoading, setIsLoading } = marketplaceContextValue;
 
+	const query = useQuery();
+
 	// Get the content for this screen
 	useEffect( () => {
 		setIsLoading( true );
@@ -36,7 +38,7 @@ export default function MySubscriptions(): JSX.Element {
 			.finally( () => {
 				setIsLoading( false );
 			} );
-	}, [] );
+	}, [ query.reload ] );
 
 	const tableHeadersDefault = [
 		{
