@@ -72,6 +72,22 @@ async function fetchSubscriptions(): Promise< Array< Subscription > > {
 	return await apiFetch( { path: url.toString() } );
 }
 
+function installProduct( productId: number ): Promise< void > {
+	const url = '/wccom-site/v2/installer';
+	const data = new URLSearchParams();
+	data.append( 'product-id', productId.toString() );
+	data.append( 'run-until-step', 'activate_product' );
+	data.append( 'idempotency-key', productId.toString() );
+	return apiFetch( {
+		path: url.toString(),
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: data,
+	} );
+}
+
 // Append UTM parameters to a URL, being aware of existing query parameters
 const appendURLParams = (
 	url: string,
@@ -95,6 +111,7 @@ export {
 	fetchDiscoverPageData,
 	fetchCategories,
 	fetchSubscriptions,
+	installProduct,
 	ProductGroup,
 	appendURLParams,
 };
