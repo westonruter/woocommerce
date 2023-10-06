@@ -5,7 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, Tooltip } from '@wordpress/components';
 import { getNewPath, useQuery } from '@woocommerce/navigation';
 import { help } from '@wordpress/icons';
-import { useContext, useEffect, useState } from '@wordpress/element';
+import { useContext } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -13,32 +13,12 @@ import { useContext, useEffect, useState } from '@wordpress/element';
 import { getAdminSetting } from '../../../utils/admin-settings';
 import { Subscription } from './types';
 import './my-subscriptions.scss';
-import { MarketplaceContext } from '../../contexts/marketplace-context';
-import { fetchSubscriptions } from '../../../marketplace/utils/functions';
 import SubscriptionsTable from './subscriptions-table';
 import SubscriptionsTableRow from './subscriptions-table-row';
+import { SubscriptionsContext } from '../../contexts/subscriptions-context';
 
 export default function MySubscriptions(): JSX.Element {
-	const [ subscriptions, setSubscriptions ] = useState<
-		Array< Subscription >
-	>( [] );
-	const marketplaceContextValue = useContext( MarketplaceContext );
-	const { isLoading, setIsLoading } = marketplaceContextValue;
-
-	const query = useQuery();
-
-	// Get the content for this screen
-	useEffect( () => {
-		setIsLoading( true );
-
-		fetchSubscriptions()
-			.then( ( subscriptionResponse ) => {
-				setSubscriptions( subscriptionResponse );
-			} )
-			.finally( () => {
-				setIsLoading( false );
-			} );
-	}, [ query.reload ] );
+	const { subscriptions, isLoading } = useContext( SubscriptionsContext );
 
 	const tableHeadersDefault = [
 		{
