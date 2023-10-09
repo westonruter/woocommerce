@@ -142,7 +142,8 @@ class WC_Helper_Subscriptions_API {
 			wp_send_json_error(
 				array(
 					'message' => __( 'There was an error activating your subscription. Please try again.', 'woocommerce' )
-				)
+				),
+				400
 			);
 		}
 	}
@@ -163,23 +164,25 @@ class WC_Helper_Subscriptions_API {
 			wp_send_json_error(
 				array(
 					'message' => __( 'There was an error deactivating your subscription. Please try again.', 'woocommerce' )
-				)
+				),
+				400
 			);
 		}
 	}
 
 	/**
-	 * Install a WooCommerce.com product.
+	 * Install a WooCommerce.com produc
 	 */
 	public static function install( $request ) {
 		$product_key = $request->get_param('product_key');
 		$subscriptions = WC_Helper::get_subscription( $product_key );
 
-		if ( empty( $subscriptions ) ) {
+		if ( true || empty( $subscriptions ) ) {
 			wp_send_json_error(
 				array(
 					'message' => __( 'We couldn\'t find this subscription.', 'woocommerce' )
-				)
+				),
+				404
 			);
 		}
 
@@ -187,7 +190,8 @@ class WC_Helper_Subscriptions_API {
 			wp_send_json_error(
 				array(
 					'message' => __( 'This subscription has expired.', 'woocommerce' )
-				)
+				),
+				402
 			);
 		}
 
@@ -195,7 +199,8 @@ class WC_Helper_Subscriptions_API {
 			wp_send_json_error(
 				array(
 					'message' => __( 'All licenses for this subscription are already in use.', 'woocommerce' )
-				)
+				),
+				402
 			);
 		}
 
@@ -204,7 +209,8 @@ class WC_Helper_Subscriptions_API {
 			wp_send_json_error(
 				array(
 					'message' => __( 'We couldn\'t activate your subscription.', 'woocommerce' )
-				)
+				),
+				400
 			);
 		}
 
@@ -225,7 +231,8 @@ class WC_Helper_Subscriptions_API {
 			wp_send_json_error(
 				array(
 					'message' => __( 'We couldn\'t install your subscription.', 'woocommerce' )
-				)
+				),
+				400
 			);
 		}
 
