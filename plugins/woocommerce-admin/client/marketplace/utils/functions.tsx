@@ -72,12 +72,10 @@ async function fetchSubscriptions(): Promise< Array< Subscription > > {
 	return await apiFetch( { path: url.toString() } );
 }
 
-function installProduct( productId: number ): Promise< void > {
-	const url = '/wccom-site/v2/installer';
+function installProduct( productKey: string ): Promise< void > {
+	const url = '/wc/v3/marketplace/subscriptions/install';
 	const data = new URLSearchParams();
-	data.append( 'product-id', productId.toString() );
-	data.append( 'run-until-step', 'activate_product' );
-	data.append( 'idempotency-key', productId.toString() );
+	data.append( 'product_key', productKey );
 	return apiFetch( {
 		path: url.toString(),
 		method: 'POST',
