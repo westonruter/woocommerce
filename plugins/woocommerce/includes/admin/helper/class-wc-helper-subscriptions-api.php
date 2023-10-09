@@ -174,7 +174,7 @@ class WC_Helper_Subscriptions_API {
 	public static function install( $request ) {
 		$product_key = $request->get_param('product_key');
 		$subscriptions = WC_Helper::get_subscription( $product_key );
-		// var_dump($subscriptions);
+
 		if ( empty( $subscriptions ) ) {
 			wp_send_json_error(
 				array(
