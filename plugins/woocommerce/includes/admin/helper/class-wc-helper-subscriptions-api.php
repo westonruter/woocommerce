@@ -177,7 +177,7 @@ class WC_Helper_Subscriptions_API {
 		$product_key = $request->get_param('product_key');
 		$subscriptions = WC_Helper::get_subscription( $product_key );
 
-		if ( true || empty( $subscriptions ) ) {
+		if ( empty( $subscriptions ) ) {
 			wp_send_json_error(
 				array(
 					'message' => __( 'We couldn\'t find this subscription.', 'woocommerce' )
