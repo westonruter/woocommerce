@@ -31,3 +31,5 @@ export {
 export { AttributeControl as __experimentalAttributeControl } from './attribute-control';
 export { Attributes as __experimentalAttributes } from './attributes';
 export * from './add-new-shipping-class-modal';
+
+export * from './remove-confirmation-modal';
