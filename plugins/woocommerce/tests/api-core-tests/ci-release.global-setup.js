@@ -1,15 +1,49 @@
-const { UPDATE_WC, USER_KEY, USER_SECRET } = process.env;
+const { UPDATE_WC, USER_KEY, USER_SECRET, GITHUB_TOKEN } = process.env;
 const { test, expect } = require( '@playwright/test' );
 const path = require( 'path' );
 const fs = require( 'fs' );
 
 const zipPath = path.resolve( 'tmp', 'woocommerce.zip' );
-const downloadURL = `https://github.com/woocommerce/woocommerce/releases/download/${ UPDATE_WC }/woocommerce.zip`;
+
+/**
+ * @param {import('@playwright/test').APIRequestContext} request
+ * @returns {string}
+ */
+const getDownloadURL = async ( request ) => {
+	/**
+	 * @returns {Promise<{tag_name: string, name: string, assets: {name: string, browser_download_url: string}[]}[]>}
+	 */
+	const getReleases = async () => {
+		const url =
+			'https://api.github.com/repos/woocommerce/woocommerce/releases';
+		const options = {
+			params: {
+				per_page: 100,
+			},
+			headers: {
+				Authorization: `Bearer ${ GITHUB_TOKEN }`,
+			},
+		};
+		const response = await request.get( url, options );
+		return await response.json();
+	};
+
+	const list = await getReleases();
+	const release = list.find( ( { tag_name, name } ) =>
+		[ tag_name, name ].includes( UPDATE_WC )
+	);
+	const downloadURL = release.assets.find(
+		( { name } ) => name === 'woocommerce.zip'
+	).browser_download_url;
+
+	return downloadURL;
+};
 
 test( `Setup remote test site`, async ( { page, request } ) => {
 	test.setTimeout( 5 * 60 * 1000 );
 
 	await test.step( `Download WooCommerce build zip`, async () => {
+		const downloadURL = getDownloadURL( request );
 		const response = await request.get( downloadURL );
 		expect( response.ok() ).toBeTruthy();
 		const body = await response.body();
