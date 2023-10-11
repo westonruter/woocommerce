@@ -7,11 +7,11 @@ const zipPath = path.resolve( 'tmp', 'woocommerce.zip' );
 
 /**
  * @param {import('@playwright/test').APIRequestContext} request
- * @returns {string}
+ * @returns {Promise<string>}
  */
 const getDownloadURL = async ( request ) => {
 	/**
-	 * @returns {Promise<{tag_name: string, name: string, assets: {name: string, browser_download_url: string}[]}[]>}
+	 * @returns {Promise<{tag_name: string, name: string, assets: {name: string, id: number}[]}[]>}
 	 */
 	const getReleases = async () => {
 		const url =
@@ -32,19 +32,25 @@ const getDownloadURL = async ( request ) => {
 	const release = list.find( ( { tag_name, name } ) =>
 		[ tag_name, name ].includes( UPDATE_WC )
 	);
-	const downloadURL = release.assets.find(
+	const assetId = release.assets.find(
 		( { name } ) => name === 'woocommerce.zip'
-	).browser_download_url;
+	).id;
+	const downloadURL = `https://api.github.com/repos/woocommerce/woocommerce/releases/assets/${ assetId }`;
 
-	return downloadURL;
+	return Promise.resolve( downloadURL );
 };
 
 setup( `Setup remote test site`, async ( { page, request } ) => {
 	setup.setTimeout( 5 * 60 * 1000 );
 
 	await setup.step( `Download WooCommerce build zip`, async () => {
-		const downloadURL = getDownloadURL( request );
-		const response = await request.get( downloadURL );
+		const downloadURL = await getDownloadURL( request );
+		const response = await request.get( downloadURL, {
+			headers: {
+				Authorization: `Bearer ${ GITHUB_TOKEN }`,
+				Accept: 'application/octet-stream',
+			},
+		} );
 		expect( response.ok() ).toBeTruthy();
 		const body = await response.body();
 		fs.mkdirSync( 'tmp', { recursive: true } );
@@ -69,24 +75,30 @@ setup( `Setup remote test site`, async ( { page, request } ) => {
 		).toBeVisible();
 	} );
 
-	await setup.step( `Deactivate currently installed WooCommerce version`, async () => {
-		const response = await request.put(
-			'/wp-json/wp/v2/plugins/woocommerce/woocommerce',
-			{
-				data: {
-					status: 'inactive',
-				},
-			}
-		);
-		expect( response.ok() ).toBeTruthy();
-	} );
+	await setup.step(
+		`Deactivate currently installed WooCommerce version`,
+		async () => {
+			const response = await request.put(
+				'/wp-json/wp/v2/plugins/woocommerce/woocommerce',
+				{
+					data: {
+						status: 'inactive',
+					},
+				}
+			);
+			expect( response.ok() ).toBeTruthy();
+		}
+	);
 
-	await setup.step( `Delete currently installed WooCommerce version`, async () => {
-		const response = await request.delete(
-			'/wp-json/wp/v2/plugins/woocommerce/woocommerce'
-		);
-		expect( response.ok() ).toBeTruthy();
-	} );
+	await setup.step(
+		`Delete currently installed WooCommerce version`,
+		async () => {
+			const response = await request.delete(
+				'/wp-json/wp/v2/plugins/woocommerce/woocommerce'
+			);
+			expect( response.ok() ).toBeTruthy();
+		}
+	);
 
 	await setup.step( `Install WooCommerce ${ UPDATE_WC }`, async () => {
 		const Upload_Plugin = 'Upload Plugin';
