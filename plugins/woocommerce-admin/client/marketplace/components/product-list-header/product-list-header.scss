@@ -17,7 +17,7 @@
 		margin-top: $small-gap;
 
 		&.is-loading {
-			background: #f0f0f0;
+			background: $skeleton-loader-color;
 			height: 26px;
 			margin: 0;
 			width: min(100%, 12em);
