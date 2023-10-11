@@ -97,7 +97,7 @@ export default function Products( props: ProductsProps ): JSX.Element {
 
 	function content() {
 		if ( isLoading ) {
-			return <ProductLoader />;
+			return <ProductLoader hasTitle={ false } type={ props.type } />;
 		}
 
 		if ( products.length === 0 ) {

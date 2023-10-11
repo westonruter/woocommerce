@@ -14,10 +14,11 @@ import { Product, ProductType } from '../product-list/types';
 export interface ProductCardProps {
 	type?: string;
 	product?: Product;
+	isLoading?: boolean;
 }
 
 function ProductCard( props: ProductCardProps ): JSX.Element {
-	const type = props.type;
+	const { isLoading, type } = props;
 	// Get the product if provided; if not provided, render a skeleton loader
 	const product = props.product ?? {
 		title: '',
@@ -27,8 +28,8 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 		icon: '',
 		url: '',
 		price: 0,
+		image: '',
 	};
-	const isLoading = ! props.product;
 
 	// We hardcode this for now while we only display prices in USD.
 	const currencySymbol = '$';
@@ -60,25 +61,31 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 			<div className="woocommerce-marketplace__product-card__content">
 				{ isTheme && (
 					<div className="woocommerce-marketplace__product-card__image">
-						<img
-							className="woocommerce-marketplace__product-card__image-inner"
-							src={ product.image }
-							alt={ product.title }
-						/>
+						{ ! isLoading &&
+							<img
+								className="woocommerce-marketplace__product-card__image-inner"
+								src={ product.image }
+								alt={ product.title }
+							/>
+						}
 					</div>
 				) }
 				<div className="woocommerce-marketplace__product-card__header">
 					<div className="woocommerce-marketplace__product-card__details">
-						{ isLoading &&
-							<div className="woocommerce-marketplace__product-card__icon" />
+						{ ! isTheme &&
+							<>
+								{ isLoading &&
+									<div className="woocommerce-marketplace__product-card__icon" />
+								}
+								{ ! isLoading && product.icon && (
+									<img
+										className="woocommerce-marketplace__product-card__icon"
+										src={ product.icon }
+										alt={ product.title }
+									/>
+								) }
+							</>
 						}
-						{ ! isTheme && product.icon && (
-							<img
-								className="woocommerce-marketplace__product-card__icon"
-								src={ product.icon }
-								alt={ product.title }
-							/>
-						) }
 						<div className="woocommerce-marketplace__product-card__meta">
 							<h2 className="woocommerce-marketplace__product-card__title">
 								<a
@@ -93,7 +100,7 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 							{ isLoading &&
 								<p className="woocommerce-marketplace__product-card__vendor" />
 							}
-							{ productVendor && (
+							{ ! isLoading && productVendor && (
 								<p className="woocommerce-marketplace__product-card__vendor">
 									<span>{ __( 'By ', 'woocommerce' ) }</span>
 									{ productVendor }
@@ -104,7 +111,7 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 				</div>
 				{ ! isTheme && (
 					<p className="woocommerce-marketplace__product-card__description">
-						{ product.description }
+						{ ! isLoading && product.description }
 					</p>
 				) }
 				<div className="woocommerce-marketplace__product-card__price">

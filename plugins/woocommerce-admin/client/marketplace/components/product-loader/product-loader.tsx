@@ -11,12 +11,13 @@ import ProductCard from '../product-card/product-card';
 interface ProductLoaderProps {
 	hasTitle?: boolean;
 	placeholderCount?: number;
+	type: string;
 }
 
 export default function ProductLoader(
 	props: ProductLoaderProps
 ): JSX.Element {
-	const { hasTitle } = props;
+	const { hasTitle, type } = props;
 	const placeholderCount = props.placeholderCount || 12
 
 	return (
@@ -26,7 +27,7 @@ export default function ProductLoader(
 			) }
 			<div className="woocommerce-marketplace__product-list-content">
 				{ [ ...Array( placeholderCount ) ].map( () => (
-					<ProductCard />
+					<ProductCard isLoading={ true } type={ type } />
 				) ) }
 			</div>
 		</div>
