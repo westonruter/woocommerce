@@ -85,10 +85,13 @@ export default function Products( props: ProductsProps ): JSX.Element {
 	const baseContainerClass = 'woocommerce-marketplace__search-';
 	const baseProductListTitleClass = 'product-list-title--';
 
-	const containerClassName = classnames( baseContainerClass + label );
+	const containerClassName = classnames(
+		baseContainerClass + label
+	);
 	const productListTitleClassName = classnames(
 		'woocommerce-marketplace__product-list-title',
-		baseContainerClass + baseProductListTitleClass + label
+		baseContainerClass + baseProductListTitleClass + label,
+		{ 'is-loading': isLoading }
 	);
 	const viewAllButonClassName = classnames(
 		'woocommerce-marketplace__view-all-button',
@@ -124,7 +127,7 @@ export default function Products( props: ProductsProps ): JSX.Element {
 
 	return (
 		<div className={ containerClassName }>
-			<h2 className={ productListTitleClassName }>{ title }</h2>
+			<h2 className={ productListTitleClassName }>{ isLoading ? ' ' : title }</h2>
 			{ content() }
 		</div>
 	);
