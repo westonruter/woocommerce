@@ -25,7 +25,7 @@ const getDownloadURL = async ( request ) => {
 			},
 		};
 		const response = await request.get( url, options );
-		return await response.json();
+		return response.json();
 	};
 
 	const list = await getReleases();
