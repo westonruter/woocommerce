@@ -14,7 +14,7 @@
 				overflow: hidden;
 			}
 
-			.woocommerce-marketplace__product-card__title,
+			&.woocommerce-marketplace__product-card--extension .woocommerce-marketplace__product-card__title,
 			.woocommerce-marketplace__product-card__description,
 			.woocommerce-marketplace__product-card__price {
 				width: 100vw;
